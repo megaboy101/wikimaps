@@ -12,6 +12,13 @@ class Wikimap:
     self.cursor = self.connection.cursor()
     self.cursor.arraysize = 1000
 
+  def test_func(self):
+    if not self.connection:
+      return "no connection"
+    else:
+      return "connection"
+    
+
   def get_page(self, title):
     # return (randrange(10000, 100000), title)
     title = self.serialize_title(title)

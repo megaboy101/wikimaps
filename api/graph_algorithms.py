@@ -4,7 +4,7 @@ def get_paths(page_ids, visited):
   for page_id in page_ids:
     if page_id is None:
       return [[]]
-    else:
+    else: 
       current_paths = get_paths(visited[page_id], visited)
       for current_path in current_paths:
         new_path = list(current_path)
