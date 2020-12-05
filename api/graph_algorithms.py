@@ -15,7 +15,7 @@ def get_paths(page_ids, visited):
 
 
 # Returns list(list(int)), a list of id paths
-def breadth_first_search(src_id, dest_id, db):
+def breadth_first_search_bidirectional(src_id, dest_id, db):
   # If the src and dest are identical, no search needed
   if src_id == dest_id:
     return [[src_id]]
@@ -89,5 +89,52 @@ def breadth_first_search(src_id, dest_id, db):
 
             if current_path not in paths:
               paths.append(current_path)
+
+  return paths
+
+
+# Returns list(list(int)), a list of id paths
+def breadth_first_search(src_id, dest_id, db):
+  # If the src and dest are identical, no search needed
+  if src_id == dest_id:
+    return [[src_id]]
+
+  paths = []
+
+  # Initialize the src vertex to be unvisited
+  unvisited = { src_id: [None] }
+
+  visited = {}
+
+  depth = 0
+
+  while (len(paths) == 0) and (len(unvisited) != 0):
+    depth += 1
+
+    outgoing_links = db.get_outgoing_links(unvisited.keys())
+
+    # Set all currently unvisited vertices as now visited
+    for page_id in unvisited:
+      visited[page_id] = unvisited[page_id]
+
+    unvisited.clear()
+
+    for src_page_id, dest_page_ids in outgoing_links:
+      for dest_page_id in dest_page_ids.split('|'):
+        if dest_page_id:
+          dest_page_id = int(dest_page_id)
+
+          if (dest_page_id not in visited) and (dest_page_id not in unvisited):
+            unvisited[dest_page_id] = [src_page_id]
+          elif dest_page_id in unvisited:
+            unvisited[dest_page_id].append(src_page_id)
+
+    # Check path completion
+    for page_id in unvisited:
+      paths_from_src = get_paths(unvisited[page_id], visited)
+      for path in paths_from_src:
+        current_path = list(path) + [page_id]
+        if page_id == dest_id:
+          paths.append(current_path)
 
   return paths

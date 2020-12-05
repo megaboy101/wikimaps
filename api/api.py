@@ -4,7 +4,7 @@ from flask import Flask, request
 from wikimap import Wikimap
 
 app = Flask(__name__)
-wikimap = Wikimap("../../sdow.sqlite/sdow.sqlite")
+wikimap = Wikimap("../data.sqlite")
 
 
 @app.route('/path', methods=['GET'])
@@ -12,7 +12,6 @@ wikimap = Wikimap("../../sdow.sqlite/sdow.sqlite")
 def path():
     src_id = int(request.args.get('src-id'))
     dest_id = int(request.args.get('dest-id'))
-
     path = wikimap.determine_path(src_id, dest_id)
     #path = wikimap.determine_path(316, 101398)
 
