@@ -1,7 +1,8 @@
 import os.path
 import sqlite3
 from random import randrange
-from graph_algorithms import breadth_first_search
+from graph_algorithms import breadth_first_search_bidirectional, breadth_first_search
+from timeout import timeout
 
 class Wikimap:
   def __init__(self, db_src_url):
@@ -41,9 +42,33 @@ class Wikimap:
 
     raise ValueError(f'Queried page did not show up in results')
 
-  def determine_path(self, src_id, dest_id, algorithm='bfs'):
+  def determine_path(self, src_id, dest_id, algorithm='bfsb'):
     # return [ randrange(10000, 100000) for _ in range(randrange(100)) ]
-    return breadth_first_search(src_id, dest_id, self)
+    paths = []
+    if algorithm == 'bfsb':
+      # If exection exceeds timeout, assume there are no connecting paths
+      try:
+        paths = breadth_first_search_bidirectional(src_id, dest_id, self)
+      except:
+        paths = []
+    elif algorithm == 'bfs':
+      # If exection exceeds timeout, assume there are no connecting paths
+      try:
+        paths = breadth_first_search(src_id, dest_id, self)
+      except:
+        paths = []
+    
+    paths_by_name = []
+    for path in paths:
+      name_path = []
+      for id in path:
+        query = f'SELECT * FROM pages WHERE id = {id}'
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()[1]
+        name_path.append(result)
+      paths_by_name.append(name_path)
+    
+    return paths_by_name
 
   def get_outgoing_link_count(self, ids):
     ids = str(tuple(ids)).replace(',)', ')')
