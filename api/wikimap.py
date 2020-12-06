@@ -2,6 +2,7 @@ import os.path
 import sqlite3
 from random import randrange
 from graph_algorithms import breadth_first_search_bidirectional, breadth_first_search
+from timeout import timeout
 
 class Wikimap:
   def __init__(self, db_src_url):
@@ -45,9 +46,17 @@ class Wikimap:
     # return [ randrange(10000, 100000) for _ in range(randrange(100)) ]
     paths = []
     if algorithm == 'bfsb':
-      paths = breadth_first_search_bidirectional(src_id, dest_id, self)
+      # If exection exceeds timeout, assume there are no connecting paths
+      try:
+        paths = breadth_first_search_bidirectional(src_id, dest_id, self)
+      except:
+        paths = []
     elif algorithm == 'bfs':
-      paths = breadth_first_search(src_id, dest_id, self)
+      # If exection exceeds timeout, assume there are no connecting paths
+      try:
+        paths = breadth_first_search(src_id, dest_id, self)
+      except:
+        paths = []
     
     paths_by_name = []
     for path in paths:
