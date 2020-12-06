@@ -8,6 +8,8 @@ function App() {
 
   const [source, setSource] = useState("");
   const [dest, setDest] = useState("");
+  const [path, setPath] = useState([]);
+
 
 
   const handleChangeSrc = (e) => {
@@ -17,17 +19,26 @@ function App() {
     setDest(e.target.value);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     //pass source and dest into api
       e.preventDefault();
       //call api function
-      fetch('/movies.json')
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
-        });
-      // console.log(source);
-      // console.log(dest);
+      let srcRes = await fetch(`/title?title=${source}`);
+      const [srcId, srcTitle]  = await srcRes.json();
+      let destRes = await fetch(`/title?title=${dest}`);
+      const [destId, destTitle]= await res.json();
+
+      //add check for empty list
+
+      let paths = await fetch(`./path?src-id=${srcId}&dest-id=${destId}`);
+      //sort this path based on length
+      let path = paths[0];
+      //display this path on screen
+      setPath(path);
+
+      //[einstein, atomic_bomb, world war 2]
+
+        
   }
 
   return (
@@ -39,6 +50,13 @@ function App() {
       <div className="container">
         <div className="input-field">
             <FloatingLabelInput className="input" label="Source" id="source" onChange={handleChangeSrc} />
+        </div>
+        <div>
+          {path.map( title => {
+            return(
+            <p> {title} </p>
+            )
+          })}
         </div>
         <div className="input-field">
             <FloatingLabelInput className="input" label="Destination" id="destination" onChange={handleChangeDest} />
