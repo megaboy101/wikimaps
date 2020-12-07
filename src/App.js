@@ -9,6 +9,7 @@ function App() {
   const [source, setSource] = useState("");
   const [dest, setDest] = useState("");
   const [path, setPath] = useState([]);
+  const [error, setError] = useState(false);
 
 
 
@@ -30,16 +31,18 @@ function App() {
 
       //add check for empty list
 
+
       const res = await fetch(`./path?src-id=${srcId}&dest-id=${destId}`);
       //sort this path based on length
       const paths = (await res.json()).path;
-      let path = paths[0];
-      //display this path on screen
-      setPath(path);
-
-      //[einstein, atomic_bomb, world war 2]
-
-        
+      if (paths.length !== 0){
+        setPath(paths[0]);
+        setError(false);
+      } else {
+        setPath([]);
+        setError(true);
+      }
+      //[einstein, atomic_bomb, world war 2]        
   }
 
   return (
@@ -52,10 +55,14 @@ function App() {
         <div className="input-field">
             <FloatingLabelInput className="input" label="Source" id="source" onChange={handleChangeSrc} />
         </div>
-        <div>
-          {path.map( title => {
+        <div className="resultTable">
+          {
+            error &&
+            <p>No path exists</p>
+          }
+          {path && path.map(title => {
             return(
-            <p> {title} </p>
+            <p key={title}><a href={`https://en.wikipedia.org/wiki/${title}`} className="linkColour" target="_blank">{title}</a></p>
             )
           })}
         </div>

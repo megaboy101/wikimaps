@@ -4,7 +4,7 @@ from flask import Flask, request
 from wikimap import Wikimap
 
 app = Flask(__name__)
-wikimap = Wikimap("../data.sqlite")
+wikimap = Wikimap("../../data.sqlite/data.sqlite")
 
 
 @app.route('/path', methods=['GET'])
@@ -20,7 +20,7 @@ def path():
 
     return { 'path': path }
     #return (src_id, dest_id)
-
+ 
 @app.route('/title', methods=['GET'])
 #handle get request for page given page title
 def title():
