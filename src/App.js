@@ -23,15 +23,16 @@ function App() {
     //pass source and dest into api
       e.preventDefault();
       //call api function
-      let srcRes = await fetch(`/title?title=${source}`);
-      const [srcId, srcTitle]  = await srcRes.json();
-      let destRes = await fetch(`/title?title=${dest}`);
-      const [destId, destTitle]= await res.json();
+      const srcRes = await fetch(`/title?title=${source}`);
+      const [srcId, srcTitle]  = (await srcRes.json()).page;
+      const destRes = await fetch(`/title?title=${dest}`);
+      const [destId, destTitle]= (await destRes.json()).page;
 
       //add check for empty list
 
-      let paths = await fetch(`./path?src-id=${srcId}&dest-id=${destId}`);
+      const res = await fetch(`./path?src-id=${srcId}&dest-id=${destId}`);
       //sort this path based on length
+      const paths = (await res.json()).path;
       let path = paths[0];
       //display this path on screen
       setPath(path);
